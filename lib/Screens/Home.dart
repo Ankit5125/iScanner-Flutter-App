@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:iscanner/Screens/EditingScreen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -63,64 +63,88 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade800,
-                    borderRadius: BorderRadius.circular(10),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade800,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    height: 400,
+                    width: 500,
+                    child: !isSelected
+                        ? Center(
+                            child: Text(
+                              "Pick Image",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        : Image.file(image!, fit: BoxFit.fitWidth),
                   ),
-                  height: 400,
-                  width: 500,
-                  child: !isSelected
-                      ? Center(
-                          child: Text(
-                            "Pick Image",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        )
-                      : Image.file(image!, fit: BoxFit.fitWidth),
                 ),
-              ),
-              isSelected
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width - 70,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 15,
+                isSelected
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 15,
+                              ),
+                              margin: EdgeInsets.symmetric(vertical: 15),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade800,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                objectDetails,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
                           ),
-                          margin: EdgeInsets.symmetric(vertical: 15),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade800,
-                            borderRadius: BorderRadius.circular(20),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: Column(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    Clipboard.setData(
+                                      ClipboardData(text: objectDetails),
+                                    );
+                                  },
+                                  icon: Icon(Icons.copy),
+                                  color: Colors.white,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => EditingScreen(
+                                          details: objectDetails,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  icon: Icon(Icons.edit),
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
                           ),
-                          child: Text(
-                            objectDetails,
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Clipboard.setData(
-                              ClipboardData(text: objectDetails),
-                            );
-                          },
-                          icon: Icon(Icons.copy),
-                          color: Colors.white,
-                        ),
-                      ],
-                    )
-                  : Container(),
-            ],
+                        ],
+                      )
+                    : Container(),
+              ],
+            ),
           ),
         ),
       ),
